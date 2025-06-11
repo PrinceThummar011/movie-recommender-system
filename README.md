@@ -25,7 +25,7 @@ It recommends movies based on user ratings using collaborative filtering techniq
 # movie-recommender-system
 
 movie-recommender-system/
-├── dataset/ # data set link
+├── dataset/ # dataset link
 ├── movie_dict.pkl # Pickle file containing movie metadata
 ├── movies.pkl # Pickle file containing similarity or model data
 ├── movie_recommender.ipynb # Jupyter Notebook for development/testing
@@ -42,22 +42,23 @@ movie-recommender-system/
 ```bash
 git clone https://github.com/PrinceThummar011/movie-recommender-system.git
 cd movie-recommender-system
+```
 
 
-### 2. Install required libraries
-```bash
+
+## 2. Install required libraries
+
 Make sure you have Python 3.7+ and install dependencies using:
 
 pip install streamlit pandas scikit-learn
 
     You can also create a requirements.txt file if needed.
 
-### 3. Run the Streamlit app
-```bash
+## 3. Run the Streamlit app
+
 streamlit run streamlit_app.py
 
-### 4. Use the app
-```bash
+## 4. Use the app
     Select a movie from the dropdown
 
     Click on "Show Recommendation"
