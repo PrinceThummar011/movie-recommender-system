@@ -1,7 +1,28 @@
 # 🎬 Movie Recommender System
 
-This is a simple Movie Recommender System project built using Python.  
+This is a simple Movie Recommende## 3. Run the Streamlit app
+
+```bash
+streamlit run streamlit_app.py
+```
+
+## 4. Use the app
+- Select a movie from the dropdown
+- Click on "Show Recommendations"  
+- You'll see 5 similar movies recommended
+
+---
+
+## 📊 Dataset
+This project uses the TMDb (The Movie Database) dataset containing movie metadata, genres, cast, crew, and user ratings.
+
+**Dataset source:** [TMDb Movie Metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
+
+---roject built using Python.  
 It recommends movies based on user ratings using collaborative filtering techniques.
+
+## 🌟 Live Demo
+**🚀 Try the app live:** [https://movie-recommender-system-by-prince.streamlit.app/](https://movie-recommender-system-by-prince.streamlit.app/)
 
 ## 📌 Features
 
@@ -38,6 +59,13 @@ movie-recommender-system/
 
 ## 🚀 How to Run the Project
 
+### Option 1: Try the Live App (Recommended)
+🌐 **Visit the live app:** [https://movie-recommender-system-by-prince.streamlit.app/](https://movie-recommender-system-by-prince.streamlit.app/)
+
+No installation required! Just click the link and start getting movie recommendations instantly.
+
+### Option 2: Run Locally
+
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/PrinceThummar011/movie-recommender-system.git
@@ -50,9 +78,11 @@ cd movie-recommender-system
 
 Make sure you have Python 3.7+ and install dependencies using:
 
+```bash
 pip install streamlit pandas scikit-learn
+```
 
-    You can also create a requirements.txt file if needed.
+You can also create a requirements.txt file if needed.
 
 ## 3. Run the Streamlit app
 
@@ -68,4 +98,5 @@ streamlit run streamlit_app.py
 
 
 # Made with ❤️ by Prince Thummar
-# https://github.com/PrinceThummar011/
+**🔗 Live App:** [https://movie-recommender-system-by-prince.streamlit.app/](https://movie-recommender-system-by-prince.streamlit.app/)  
+**📱 GitHub:** [https://github.com/PrinceThummar011/](https://github.com/PrinceThummar011/)
