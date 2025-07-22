@@ -31,16 +31,24 @@ def load_data():
             st.error("movies.pkl not found. Please ensure the file exists in the repository.")
             return None, None
             
-        if not os.path.exists('similarity.pkl'):
-            st.error("similarity.pkl not found. Please ensure the file exists in the repository.")
+        # Try loading compressed similarity first, then fallback to regular
+        similarity = None
+        if os.path.exists('similarity_compressed.pkl.gz'):
+            import gzip
+            from scipy import sparse
+            with gzip.open('similarity_compressed.pkl.gz', 'rb') as f:
+                similarity_sparse = pickle.load(f)
+                similarity = similarity_sparse.toarray()
+        elif os.path.exists('similarity.pkl'):
+            with open('similarity.pkl', 'rb') as f:
+                similarity = pickle.load(f)
+        else:
+            st.error("No similarity file found. Please ensure similarity.pkl or similarity_compressed.pkl.gz exists.")
             return None, None
 
         with open('movie_dict.pkl', 'rb') as f:
             movies_dict = pickle.load(f)
         movies = pd.DataFrame(movies_dict)
-        
-        with open('similarity.pkl', 'rb') as f:
-            similarity = pickle.load(f)
             
         return movies, similarity
         
