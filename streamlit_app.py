@@ -26,6 +26,7 @@ def fetch_poster(movie_id):
         print(f"Error fetching poster for movie {movie_id}: {str(e)}")
         return None
 
+<<<<<<< HEAD
 def recommend(movie, movies, similarity):
     try:
         # DEBUG: Show input
@@ -81,12 +82,37 @@ def recommend(movie, movies, similarity):
         st.error(f"❌ Error in recommendation: {str(e)}")
         import traceback
         st.code(traceback.format_exc())
+=======
+def recommend(movie):
+    try:
+        movie_index = movies[movies['title'] == movie].index[0]
+        distance = similarity[movie_index]
+        movies_list = sorted(list(enumerate(distance)),reverse=True,key=lambda x:x[1])[1:6]
+
+        recommended_movies = []
+        recommended_posters = []
+        
+        for i in movies_list:
+            # Get movie title
+            movie_title = movies.iloc[i[0]].title
+            recommended_movies.append(movie_title)
+            
+            # Get movie poster
+            movie_id = movies.iloc[i[0]].movie_id
+            poster_url = fetch_poster(movie_id)
+            recommended_posters.append(poster_url)
+            
+        return recommended_movies, recommended_posters
+    except Exception as e:
+        st.error(f"Error in recommendation: {str(e)}")
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634
         return [], []
 
 # Load data with error handling
 @st.cache_data
 def load_data():
     try:
+<<<<<<< HEAD
         # DEBUG: Add these print statements
         st.write("🔍 Loading data files...")
         
@@ -119,6 +145,39 @@ def load_data():
         
     except Exception as e:
         st.error(f"❌ Error loading data: {str(e)}")
+=======
+        if not os.path.exists('movie_dict.pkl'):
+            st.error("movie_dict.pkl not found. Please ensure the file exists in the repository.")
+            return None, None
+            
+        if not os.path.exists('movies.pkl'):
+            st.error("movies.pkl not found. Please ensure the file exists in the repository.")
+            return None, None
+            
+        # Try loading compressed similarity first, then fallback to regular
+        similarity = None
+        if os.path.exists('similarity_compressed.pkl.gz'):
+            import gzip
+            from scipy import sparse
+            with gzip.open('similarity_compressed.pkl.gz', 'rb') as f:
+                similarity_sparse = pickle.load(f)
+                similarity = similarity_sparse.toarray()
+        elif os.path.exists('similarity.pkl'):
+            with open('similarity.pkl', 'rb') as f:
+                similarity = pickle.load(f)
+        else:
+            st.error("No similarity file found. Please ensure similarity.pkl or similarity_compressed.pkl.gz exists.")
+            return None, None
+
+        with open('movie_dict.pkl', 'rb') as f:
+            movies_dict = pickle.load(f)
+        movies = pd.DataFrame(movies_dict)
+            
+        return movies, similarity
+        
+    except Exception as e:
+        st.error(f"Error loading data: {str(e)}")
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634
         return None, None
 
 # Load the data
@@ -153,7 +212,11 @@ if movies is not None:
 
     if st.button('Show Recommendations'):
         with st.spinner('Finding similar movies...'):
+<<<<<<< HEAD
             recommendations, posters = recommend(selected_movie_name, movies, similarity)
+=======
+            recommendations, posters = recommend(selected_movie_name)
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634
             
         if recommendations:
             st.subheader('🍿 Movies you might like:')
@@ -179,6 +242,7 @@ if movies is not None:
         st.write("Posters are fetched from The Movie Database (TMDb).")
 else:
     st.error("Failed to load movie data. Please check the logs for more details.")
+<<<<<<< HEAD
 
 # Add this debug section BEFORE the main app
 if st.checkbox("🔍 Debug Mode"):
@@ -217,3 +281,6 @@ if st.button("🔄 Clear Cache & Reload"):
     st.cache_data.clear()
     st.experimental_rerun()
 
+=======
+ 
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634

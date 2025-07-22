@@ -111,9 +111,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+<<<<<<< HEAD
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+=======
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634
 
 ## 🙏 Acknowledgments
 
@@ -126,4 +129,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 # Made with ❤️ by Prince Thummar
 **🔗 Live App:** [https://movie-recommender-system-by-prince.streamlit.app/](https://movie-recommender-system-by-prince.streamlit.app/)  
 **📱 GitHub:** [https://github.com/PrinceThummar011/movie-recommender-system](https://github.com/PrinceThummar011/movie-recommender-system)  
+<<<<<<< HEAD
 **💼 LinkedIn:** [Connect with me](https://linkedin.com/in/prince-thummar)
+=======
+**💼 LinkedIn:** [Connect with me][https://www.linkedin.com/in/prince2005](https://linkedin.com/in/prince2005/)
+>>>>>>> 1550e7c27efa881349f10798c642593c633c1634
