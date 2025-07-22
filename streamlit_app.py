@@ -1,61 +1,46 @@
 import streamlit as st
 import pandas as pd
 import pickle
-import numpy as np
 
-# Page configuration
-st.set_page_config(
-    page_title="Movie Recommender System",
-    page_icon="🎬",
-    layout="wide"
-)
-
+# Page title
 st.title("🎬 Movie Recommender System")
 
+# Load data function
 @st.cache_data
 def load_data():
-    try:
-        # Load exactly as your notebook
-        with open('movie_dict.pkl', 'rb') as f:
-            movie_dict = pickle.load(f)
-        movies = pd.DataFrame(movie_dict)
-        
-        with open('similarity.pkl', 'rb') as f:
-            similarity = pickle.load(f)
-        
-        return movies, similarity
-    except Exception as e:
-        st.error(f"Error: {e}")
-        return None, None
+    # Load movies
+    with open('movie_dict.pkl', 'rb') as f:
+        movie_dict = pickle.load(f)
+    movies = pd.DataFrame(movie_dict)
+    
+    # Load similarity matrix
+    with open('similarity.pkl', 'rb') as f:
+        similarity = pickle.load(f)
+    
+    return movies, similarity
 
+# Recommendation function
 def recommend(movie):
-    """Exact same function as your notebook"""
-    try:
-        movie_index = new_df[new_df['title'] == movie].index[0]
-        distance = similarity[movie_index]
-        movies_list = sorted(list(enumerate(distance)), reverse=True, key=lambda x: x[1])[1:6]
-        
-        recommendations = []
-        for i in movies_list:
-            recommendations.append(new_df.iloc[i[0]].title)
-        
-        return recommendations
-    except:
-        return []
+    movie_index = movies[movies['title'] == movie].index[0]
+    distances = similarity[movie_index]
+    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+    
+    recommended_movies = []
+    for i in movies_list:
+        recommended_movies.append(movies.iloc[i[0]].title)
+    
+    return recommended_movies
 
 # Load data
-new_df, similarity = load_data()
+movies, similarity = load_data()
 
-if new_df is not None:
-    # Movie selection
-    selected_movie = st.selectbox("Select a movie:", new_df['title'].values)
+# Movie selection
+selected_movie = st.selectbox("Choose a movie:", movies['title'].values)
+
+# Button to get recommendations
+if st.button("Show Recommendations"):
+    recommendations = recommend(selected_movie)
     
-    if st.button("Show Recommendations"):
-        recommendations = recommend(selected_movie)
-        
-        if recommendations:
-            st.write("**Recommendations:**")
-            for i, movie in enumerate(recommendations, 1):
-                st.write(f"{i}. {movie}")
-        else:
-            st.error("No recommendations found!")
+    st.write("**Recommended Movies:**")
+    for i, movie in enumerate(recommendations, 1):
+        st.write(f"{i}. {movie}")
