@@ -123,4 +123,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 # Made with ❤️ by Prince Thummar
 **🔗 Live App:** [https://movie-recommender-system-by-prince.streamlit.app/](https://movie-recommender-system-by-prince.streamlit.app/)  
 **📱 GitHub:** [https://github.com/PrinceThummar011/movie-recommender-system](https://github.com/PrinceThummar011/movie-recommender-system)  
-**💼 LinkedIn:** [Connect with me]([https://www.linkedin.com/in/prince2005](https://www.linkedin.com/in/prince2005/))
+**💼 LinkedIn:** [Connect with me][https://www.linkedin.com/in/prince2005](https://linkedin.com/in/prince2005/)
