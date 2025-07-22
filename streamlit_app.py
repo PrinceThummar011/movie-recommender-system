@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import pickle
-import requests
 import os
+import gzip
 
-# Configuration
+# Page configuration
 st.set_page_config(
     page_title="Movie Recommender System",
     page_icon="🎬",
@@ -28,7 +28,6 @@ def load_data():
         
         # Load similarity matrix
         if os.path.exists('similarity_compressed.pkl.gz'):
-            import gzip
             with gzip.open('similarity_compressed.pkl.gz', 'rb') as f:
                 similarity = pickle.load(f)
         elif os.path.exists('similarity.pkl'):
@@ -45,24 +44,21 @@ def load_data():
         return None, None
 
 def recommend(movie, movies, similarity):
-    """Get movie recommendations"""
+    """Get movie recommendations using the exact same logic as your notebook"""
     try:
-        # Find movie index
-        movie_index = movies[movies['title'] == movie].index
+        # Find movie index - exactly like your notebook
+        movie_index = movies[movies['title'] == movie].index[0]
         
-        if len(movie_index) == 0:
-            return []
+        # Get similarity distances - exactly like your notebook
+        distance = similarity[movie_index]
         
-        movie_index = movie_index[0]
+        # Sort and get top 5 - exactly like your notebook
+        movies_list = sorted(list(enumerate(distance)), reverse=True, key=lambda x: x[1])[1:6]
         
-        # Get similarity scores
-        distances = similarity[movie_index]
-        movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])
-        
-        # Get top 5 recommendations (excluding the input movie)
+        # Return movie titles - exactly like your notebook
         recommended_movies = []
-        for i, score in movies_list[1:6]:
-            recommended_movies.append(movies.iloc[i]['title'])
+        for i in movies_list:
+            recommended_movies.append(movies.iloc[i[0]].title)
             
         return recommended_movies
         
@@ -71,101 +67,109 @@ def recommend(movie, movies, similarity):
         return []
 
 def main():
-    """Main Streamlit application"""
+    """Main application"""
     
-    # Header
+    # Title
     st.title("🎬 Movie Recommender System")
-    st.markdown("**Discover movies you'll love based on your preferences!**")
+    st.markdown("**Get movie recommendations from our database of 4,803 movies!**")
     
     # Load data
-    with st.spinner("Loading movie data..."):
-        movies, similarity = load_data()
+    movies, similarity = load_data()
     
     if movies is None or similarity is None:
         st.stop()
     
-    st.success(f"✅ Loaded {len(movies)} movies successfully!")
+    # Show dataset info
+    st.success(f"✅ Loaded {len(movies)} movies from your trained model")
     
-    # Sidebar
-    st.sidebar.header("🎯 Movie Recommendation")
-    st.sidebar.markdown("Select a movie you like and get personalized recommendations!")
+    # Show some sample movies from YOUR dataset
+    with st.expander("📋 Sample movies in our database"):
+        sample_movies = movies['title'].head(20).tolist()
+        st.write(", ".join(sample_movies))
     
-    # Movie selection
+    # Movie selection - ONLY from your actual dataset
     selected_movie = st.selectbox(
-        "🎬 Choose a movie you enjoyed:",
-        options=sorted(movies['title'].unique()),
-        index=0
+        "🎬 Choose a movie from our database:",
+        options=sorted(movies['title'].tolist()),  # Only YOUR movies
+        help=f"Select from {len(movies)} movies in the database"
     )
     
-    # Number of recommendations
-    num_recommendations = st.slider(
-        "📊 Number of recommendations:",
-        min_value=3,
-        max_value=10,
-        value=5
-    )
+    # Show selected movie info
+    if selected_movie:
+        movie_info = movies[movies['title'] == selected_movie].iloc[0]
+        st.info(f"**Selected:** {selected_movie} (Movie ID: {movie_info['movie_id']})")
     
     # Get recommendations button
-    if st.button("🚀 Get Recommendations", type="primary"):
+    if st.button("🚀 Show Recommendations", type="primary"):
         with st.spinner(f"Finding movies similar to '{selected_movie}'..."):
             recommendations = recommend(selected_movie, movies, similarity)
             
             if recommendations:
-                st.success(f"🎯 Here are {len(recommendations)} movies you might enjoy:")
+                st.subheader("🎯 Movies you might like:")
                 
-                # Display recommendations
-                cols = st.columns(min(len(recommendations), 3))
-                
-                for i, movie in enumerate(recommendations[:num_recommendations]):
-                    with cols[i % 3]:
-                        st.markdown(f"""
-                        <div style="
-                            padding: 1rem;
-                            border-radius: 10px;
-                            border: 1px solid #e0e0e0;
-                            margin: 0.5rem 0;
-                            background: linear-gradient(45deg, #f0f2f6, #ffffff);
-                        ">
-                            <h4 style="margin: 0; color: #1f4e79;">
-                                {i+1}. {movie}
-                            </h4>
-                            <p style="margin: 0.5rem 0 0 0; color: #666;">
-                                🎬 Recommended for you
-                            </p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                # Display recommendations in a nice format
+                for i, movie in enumerate(recommendations, 1):
+                    # Get movie info from YOUR dataset
+                    movie_info = movies[movies['title'] == movie].iloc[0]
+                    
+                    with st.container():
+                        col1, col2 = st.columns([1, 4])
+                        
+                        with col1:
+                            st.markdown(f"### {i}")
+                        
+                        with col2:
+                            st.markdown(f"**{movie}**")
+                            st.caption(f"Movie ID: {movie_info['movie_id']}")
+                        
+                        st.divider()
                         
             else:
-                st.error("❌ No recommendations found. Try selecting a different movie.")
+                st.error("❌ No recommendations found!")
     
-    # Footer
+    # Dataset statistics
     st.markdown("---")
-    st.markdown("### 📊 About This App")
-    st.info("""
-    This Movie Recommender System uses **Content-Based Filtering** and **Cosine Similarity** 
-    to suggest movies similar to your preferences. The recommendations are based on:
-    - Movie genres
-    - Plot overview
-    - Cast and crew
-    - Keywords and themes
-    """)
+    st.subheader("📊 Dataset Information")
     
-    # Statistics
-    if movies is not None:
-        col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("🎬 Total Movies", f"{len(movies):,}")
+    
+    with col2:
+        st.metric("🔢 Movie IDs Range", f"{movies['movie_id'].min()} - {movies['movie_id'].max()}")
+    
+    with col3:
+        st.metric("🤖 Algorithm", "Cosine Similarity")
+    
+    # Show actual movie titles from your dataset
+    if st.checkbox("🔍 Browse all movies in database"):
+        st.subheader("All Movies in Your Dataset:")
         
-        with col1:
-            st.metric("🎬 Total Movies", f"{len(movies):,}")
+        # Search functionality
+        search_term = st.text_input("Search movies:", placeholder="Type to search...")
         
-        with col2:
-            if 'genres' in movies.columns:
-                unique_genres = len(set([genre for genres in movies['genres'].str.split('|').fillna([]) for genre in genres]))
-                st.metric("🎭 Genres", unique_genres)
-            else:
-                st.metric("🎭 Features", f"{similarity.shape[1]:,}")
-        
-        with col3:
-            st.metric("🤖 Algorithm", "Cosine Similarity")
+        if search_term:
+            filtered_movies = movies[movies['title'].str.contains(search_term, case=False, na=False)]
+            st.write(f"Found {len(filtered_movies)} movies matching '{search_term}':")
+            for movie in filtered_movies['title'].tolist():
+                st.write(f"• {movie}")
+        else:
+            # Show all movies in pages
+            movies_per_page = 50
+            total_pages = len(movies) // movies_per_page + 1
+            
+            page = st.selectbox("Select page:", range(1, total_pages + 1))
+            
+            start_idx = (page - 1) * movies_per_page
+            end_idx = start_idx + movies_per_page
+            
+            page_movies = movies['title'].iloc[start_idx:end_idx].tolist()
+            
+            st.write(f"**Page {page} of {total_pages}** (Movies {start_idx + 1} - {min(end_idx, len(movies))}):")
+            
+            for movie in page_movies:
+                st.write(f"• {movie}")
 
 if __name__ == "__main__":
     main()
