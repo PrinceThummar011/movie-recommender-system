@@ -8,10 +8,8 @@ st.title("🎬 Movie Recommender System")
 # Load data function
 @st.cache_data
 def load_data():
-    # Load movies
-    with open('movie_dict.pkl', 'rb') as f:
-        movie_dict = pickle.load(f)
-    movies = pd.DataFrame(movie_dict)
+    # Load movies directly from movies.pkl
+    movies = pd.read_pickle('movies.pkl')
     
     # Load similarity matrix
     with open('similarity.pkl', 'rb') as f:
